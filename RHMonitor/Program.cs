@@ -21,13 +21,13 @@ namespace RHMonitor
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1(new RPCClient()));
+            Application.Run(new MainForm(new RPCClient()));
         }
     }
 
     public class RPCClient
     {
-        public static Dictionary<string, string> clients = new Dictionary<string, string>();
+        public static Dictionary<string, string[]> clients = new Dictionary<string, string[]>();
 
         public RPCClient()
         {
@@ -36,54 +36,40 @@ namespace RHMonitor
             tm.Change(0, 10000);
         }
 
-        internal Dictionary<string, string> GetDict()
+        internal Dictionary<string, string[]> GetDict()
         {
             return clients;
         }
+
         private void TimerCallback(object state)
         {
-            string gateway = NetworkGateway();
-            if (!String.IsNullOrEmpty(gateway))
+            string localIP = GetLocalIP().ToString();
+
+            if (!String.IsNullOrEmpty(localIP))
             {
-                string[] gatewayIP = gateway.Split('.');
+                string[] gatewayIP = localIP.Split('.');
                 //host is active
-                for (int i = int.Parse(gatewayIP[3]); i < 255; i++)
+                for (int i = 1; i < 255; i++)
                 {
                     ConnectAsTcpClient(gatewayIP[0] + "." + gatewayIP[1] + "." + gatewayIP[2] + "." + i.ToString());
                 }
             }
         }
 
-        static string NetworkGateway()
+        static IPAddress GetLocalIP()
         {
-            string ip = null;
-
-            foreach (NetworkInterface f in NetworkInterface.GetAllNetworkInterfaces())
+            using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0))
             {
-                if (f.OperationalStatus == OperationalStatus.Up)
-                {
-                    foreach (GatewayIPAddressInformation d in f.GetIPProperties().GatewayAddresses)
-                    {
-                        ip = d.Address.ToString();
-                    }
-                }
+                socket.Connect("1.1.1.1", 65530);
+                IPEndPoint endPoint = socket.LocalEndPoint as IPEndPoint;
+                return endPoint.Address;
             }
-
-            return ip;
         }
 
-        public string Scan(string args)
-        {
-            string returnString = String.Empty;
-
-
-            return returnString;
-        }
-
-        private static readonly string ClientRequestString = "Some HTTP request here";
+        private static readonly string ClientRequestString = " ";
         private static readonly byte[] ClientRequestBytes = Encoding.UTF8.GetBytes(ClientRequestString);
 
-        private static readonly string ServerResponseString = "<?xml version=\"1.0\" encoding=\"utf-8\"?><document><userkey>key</userkey> <machinemode>1</machinemode><serial>0000</serial><unitname>Device</unitname><version>1</version></document>\n";
+        private static readonly string ServerResponseString = " ";
         private static readonly byte[] ServerResponseBytes = Encoding.UTF8.GetBytes(ServerResponseString);
 
         private static async void ConnectAsTcpClient(string address)
@@ -120,14 +106,13 @@ namespace RHMonitor
 
         private static void ParseResponse(string ip, string response)
         {
-            string[] args = response.Split(',');
+            string[] args = response.Replace("\"","").Split("{[]},\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Skip(1).ToArray();
             string name = ip.Split(':')[0];
-            string rate = String.Format("{0} H/s", args[7].Split(':')[1]);
 
             if (clients.ContainsKey(name))
-                clients[name] = rate;
+                clients[name] = args;
             else
-                clients.Add(name, rate);
+                clients.Add(name, args);
         }
 
         private static async void StartListener()

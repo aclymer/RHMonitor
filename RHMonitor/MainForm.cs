@@ -11,15 +11,29 @@ using System.Windows.Forms;
 
 namespace RHMonitor
 {
-    public partial class Form1 : Form
+    public partial class MainForm : Form
     {
-        delegate void DictArgReturningVoidDelegate(Dictionary<string, string> text);
+        //    name = 0,
+        //    threads = 1,
+        //    speed = 2 | 7,
+        //    accepted = 3 | 8,
+        //    rejected = 4 | 9,
+        //    temp = 5,
+        //    fan = 6,
+        //    failed = 10,
+        //    uptime = 11,
+        //    extrapayload = 12,
+        //    server = 13,
+        //    user = 14,
+        //    diff = 15
+
+        delegate void DictArgReturningVoidDelegate(Dictionary<string, string[]> text);
 
         RPCClient rpcclient;
-        Dictionary<string, string> clients;
+        Dictionary<string, string[]> clients;
         List<int> HashRates = new List<int>();
 
-        public Form1(RPCClient client)
+        public MainForm(RPCClient client)
         {
             InitializeComponent();
             rpcclient = client;
@@ -33,7 +47,7 @@ namespace RHMonitor
             SetText(clients);
         }
 
-        private void SetText(Dictionary<string, string> clients)
+        private void SetText(Dictionary<string, string[]> clients)
         {
             // InvokeRequired required compares the thread ID of the
             // calling thread to the thread ID of the creating thread.
@@ -46,15 +60,17 @@ namespace RHMonitor
             else
             {
                 int rateSum = 0;
+                int threadSum = 0;
+                int[] arf = { 0, 0, 0 };
+                string[] keys = this.clients.Keys.ToArray();
 
-                for (int i = 0; i < this.clients.Count; i++)
+                for (int i = 0; i < keys.Length; i++)
                 {
-                    int clientRate = int.Parse(this.clients[this.clients.Keys.ElementAt(i)].Split(' ')[0]);
-                    rateSum += clientRate;
+                    string clientName = keys[i];
 
-                    Control item = new ClientInstance(this.clients.Keys.ElementAt(i), clientRate);
+                    var item = new ClientInstance(clientName, this.clients[keys[i]]);
 
-                    foreach (Control cntrl in listBoxClients.Controls)
+                    foreach (ClientInstance cntrl in listBoxClients.Controls)
                     {
                         if (cntrl.Name == item.Name)
                         {
@@ -64,23 +80,31 @@ namespace RHMonitor
                     }
 
                     if (listBoxClients.Controls.Contains(item))
-                    {
-                        ((ClientInstance)listBoxClients.Controls[listBoxClients.Controls.GetChildIndex(item)]).ClientName = item.Name;
-                        ((ClientInstance)listBoxClients.Controls[listBoxClients.Controls.GetChildIndex(item)]).HashRate = int.Parse(this.clients[this.clients.Keys.ElementAt(i)].Split(' ')[0]);
-                    }
+                        item.SetAllFields(this.clients[keys[i]]);
                     else
                         this.listBoxClients.Controls.Add(item);
 
+                    rateSum += item.GetHashRate();
+                    threadSum += item.GetThreads();
+                    var temp = item.GetARF();
+                    arf = new int[]{ arf[0] + temp[0], arf[1] + temp[1], arf[2] + temp[2]};
                     listBoxClients.Update();
                 }
 
                 HashRates.Add(rateSum);
-                while (HashRates.Count > 100)
-                    HashRates.RemoveAt(0);
-
-                averageHashRate.Text = String.Format("{0} H/s", HashRates.Sum() / HashRates.Count);
+                totalThreads.Text = threadSum.ToString();
+                averageHashRate.Text = String.Format("{0} H/s", GetAverageHashRate());
+                acceptedBlocks.Text = String.Format("{0} / {1} / {2}", arf[0], arf[1], arf[2]);
                 numberOfClients.Text = this.clients.Count.ToString();
             }
+        }
+
+        private int GetAverageHashRate()
+        {
+            if (HashRates.Count < 2)
+                return HashRates.Sum();
+
+            return HashRates.Sum() / HashRates.Count;
         }
     }
 }
