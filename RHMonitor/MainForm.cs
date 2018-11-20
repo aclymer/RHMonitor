@@ -88,7 +88,9 @@ namespace RHMonitor
                         if (listBoxClients.Controls.Contains(item))
                             item.SetAllFields(this.clients[keys[i]]);
                         else
-                            this.listBoxClients.Controls.Add(item);
+                        {
+                            this.listBoxClients.Controls.Add(item, 0, 1 + clients.Keys.ToList().IndexOf(item.Name)); // Don't move the header row 0
+                        }
 
                         rateSum += item.GetHashRate();
                         threadSum += item.GetThreads();
