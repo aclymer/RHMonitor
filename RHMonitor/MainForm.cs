@@ -1,4 +1,5 @@
 ﻿using System;
+using RHMonitor;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -27,10 +28,10 @@ namespace RHMonitor
         //    user = 14,
         //    diff = 15
 
-        delegate void DictArgReturningVoidDelegate(Dictionary<string, string[]> text);
+        delegate void DictArgReturningVoidDelegate(SortedDictionary<string, string[]> text);
 
         RPCClient rpcclient;
-        Dictionary<string, string[]> clients;
+        SortedDictionary<string, string[]> clients;
         List<int> HashRates = new List<int>();
 
         public MainForm(RPCClient client)
@@ -47,7 +48,7 @@ namespace RHMonitor
             SetText(clients);
         }
 
-        private void SetText(Dictionary<string, string[]> clients)
+        private void SetText(SortedDictionary<string, string[]> clients)
         {
             // InvokeRequired required compares the thread ID of the
             // calling thread to the thread ID of the creating thread.
@@ -68,27 +69,51 @@ namespace RHMonitor
                 {
                     string clientName = keys[i];
 
-                    var item = new ClientInstance(clientName, this.clients[keys[i]]);
+                    if (clientName == null)
+                        continue;
 
-                    foreach (ClientInstance cntrl in listBoxClients.Controls)
+                    try
                     {
-                        if (cntrl.Name == item.Name)
+                        var item = new ClientInstance(clientName, this.clients[keys[i]]);
+
+                        foreach (ClientInstance cntrl in listBoxClients.Controls)
                         {
-                            item = cntrl;
-                            break;
+                            if (cntrl.Name == item.Name)
+                            {
+                                item = cntrl;
+                                break;
+                            }
                         }
+
+                        if (listBoxClients.Controls.Contains(item))
+                            item.SetAllFields(this.clients[keys[i]]);
+                        else
+                            this.listBoxClients.Controls.Add(item);
+
+                        rateSum += item.GetHashRate();
+                        threadSum += item.GetThreads();
+                        var temp = item.GetARF();
+                        arf = new int[] { arf[0] + temp[0], arf[1] + temp[1], arf[2] + temp[2] };
+                    }
+                    catch (KeyNotFoundException e)
+                    {
+                        e.Equals(e);
+                        listBoxClients.Controls.RemoveByKey(clientName);
+                        continue;
+                    }
+                }
+
+                if (this.clients.Count < listBoxClients.Controls.Count - 1)
+                {
+                    ClientInstance client = null;
+                    foreach (ClientInstance instance in listBoxClients.Controls)
+                    {
+                        if (!this.clients.ContainsKey(instance.Name))
+                            client = instance;
                     }
 
-                    if (listBoxClients.Controls.Contains(item))
-                        item.SetAllFields(this.clients[keys[i]]);
-                    else
-                        this.listBoxClients.Controls.Add(item);
-
-                    rateSum += item.GetHashRate();
-                    threadSum += item.GetThreads();
-                    var temp = item.GetARF();
-                    arf = new int[]{ arf[0] + temp[0], arf[1] + temp[1], arf[2] + temp[2]};
-                    listBoxClients.Update();
+                    if (client != null)
+                        listBoxClients.Controls.Remove(client);
                 }
 
                 HashRates.Add(rateSum);
@@ -96,6 +121,7 @@ namespace RHMonitor
                 averageHashRate.Text = String.Format("{0} H/s", GetAverageHashRate());
                 acceptedBlocks.Text = String.Format("{0} / {1} / {2}", arf[0], arf[1], arf[2]);
                 numberOfClients.Text = this.clients.Count.ToString();
+                listBoxClients.Update();
             }
         }
 
@@ -105,6 +131,35 @@ namespace RHMonitor
                 return HashRates.Sum();
 
             return HashRates.Sum() / HashRates.Count;
+        }
+
+        private void textBox1_Click(object sender, EventArgs e)
+        {
+            textBox1.Clear();
+        }
+
+        private void textBox1_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)System.ConsoleKey.Enter)
+            {
+                System.Net.IPAddress ip;
+
+                if (System.Net.IPAddress.TryParse(textBox1.Text, out ip))
+                {
+                    Program.client.ConnectAsTcpClient(ip.ToString());
+                    textBox1.Text = "Enter manual IP address here";
+                }
+            }
+            if (!"0123456789.".ToCharArray().Contains(e.KeyChar))
+            {
+                e.Handled = true;
+                return;
+            }
+        }
+
+        private void textBox1_Leave(object sender, EventArgs e)
+        {
+            textBox1.Text = "Enter manual IP address here";
         }
     }
 }

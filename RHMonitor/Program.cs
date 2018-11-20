@@ -11,8 +11,9 @@ using System.Net.NetworkInformation;
 
 namespace RHMonitor
 {
-    static class Program
+    public static class Program
     {
+        public static RPCClient client = new RPCClient();
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -21,13 +22,13 @@ namespace RHMonitor
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm(new RPCClient()));
+            Application.Run(new MainForm(client));
         }
     }
 
     public class RPCClient
     {
-        public static Dictionary<string, string[]> clients = new Dictionary<string, string[]>();
+        public static SortedDictionary<string, string[]> clients = new SortedDictionary<string, string[]>(new IPComparer());
 
         public RPCClient()
         {
@@ -36,9 +37,14 @@ namespace RHMonitor
             tm.Change(0, 10000);
         }
 
-        internal Dictionary<string, string[]> GetDict()
+        internal SortedDictionary<string, string[]> GetDict()
         {
             return clients;
+        }
+
+        private object IPSorter(KeyValuePair<string, string[]> arg)
+        {
+            throw new NotImplementedException();
         }
 
         private void TimerCallback(object state)
@@ -49,18 +55,27 @@ namespace RHMonitor
             {
                 string[] gatewayIP = localIP.Split('.');
                 //host is active
+                for (int i = 0; i < clients.Count; i++)
+                {
+                    var client = clients.ElementAt(i);
+                    ConnectAsTcpClient(client.Key);
+                }
+
                 for (int i = 1; i < 255; i++)
                 {
-                    ConnectAsTcpClient(gatewayIP[0] + "." + gatewayIP[1] + "." + gatewayIP[2] + "." + i.ToString());
+                    string address = gatewayIP[0] + "." + gatewayIP[1] + "." + gatewayIP[2] + "." + i.ToString();
+
+                    if (!clients.ContainsKey(address))
+                        ConnectAsTcpClient(address);
                 }
             }
         }
-
+        
         static IPAddress GetLocalIP()
         {
             using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0))
             {
-                socket.Connect("1.1.1.1", 65530);
+                socket.Connect("1.1.1.1", 7111);
                 IPEndPoint endPoint = socket.LocalEndPoint as IPEndPoint;
                 return endPoint.Address;
             }
@@ -71,19 +86,32 @@ namespace RHMonitor
 
         private static readonly string ServerResponseString = " ";
         private static readonly byte[] ServerResponseBytes = Encoding.UTF8.GetBytes(ServerResponseString);
+        
+        public class IPComparer : IComparer<string>
+        {
+            public int Compare(string x, string y)
+            {
+                int xIP = int.Parse(x.Split('.')[3]);
+                int yIP = int.Parse(y.Split('.')[3]);
+                return xIP.CompareTo(yIP);
+            }
+        }
 
-        private static async void ConnectAsTcpClient(string address)
+        public async void ConnectAsTcpClient(string address)
         {
             try
             {
                 using (var tcpClient = new TcpClient())
                 {
-                    Console.WriteLine("[Client] Connecting to server");
                     await tcpClient.ConnectAsync(address, 7111);
-                    Console.WriteLine("[Client] Connected to server");
+
+                    if (!clients.ContainsKey(address))
+                        clients.Add(address, null);
+
+                    Console.WriteLine("Connected to " + address);
+
                     using (var networkStream = tcpClient.GetStream())
                     {
-                        Console.WriteLine("[Client] Writing request {0}", ClientRequestString);
                         await networkStream.WriteAsync(ClientRequestBytes, 0, ClientRequestBytes.Length);
 
                         var buffer = new byte[512];
@@ -93,14 +121,24 @@ namespace RHMonitor
                         if (!String.IsNullOrEmpty(response))
                             ParseResponse(tcpClient.Client.RemoteEndPoint.ToString(), response);
 
-                        Console.WriteLine("[Client] Server response was {0}", response);
+                        Console.WriteLine("Client response was {0}", response);
                     }
                 }
             }
             catch (System.Net.Sockets.SocketException e)
             {
+                NotConnected(address);
                 e.Equals(e);
                 return;
+            }
+        }
+
+        private static void NotConnected(string address)
+        {
+            lock (clients)
+            {
+                if (clients.ContainsKey(address))
+                    clients.Remove(address);
             }
         }
 

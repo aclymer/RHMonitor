@@ -5,7 +5,6 @@ using System.Drawing;
 using System.Data;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace RHMonitor
@@ -38,14 +37,20 @@ namespace RHMonitor
         public ClientInstance(string name, string[] response) : this()
         {
             this.Name = name;
+            hashRateLbl.Text = "0 H/s";
             arfLbl.Text = "0 / 0 / 0";
             threadsLbl.Text = "0";
             clientName.Text = name;
             SetAllFields(response);
+
+            this.Dock = DockStyle.Top;
         }
 
         public void SetAllFields(string[] response)
         {
+            if (response == null)
+                return;
+
             foreach (var line in response)
             {
                 string key = line.Split(':')[0].Trim();

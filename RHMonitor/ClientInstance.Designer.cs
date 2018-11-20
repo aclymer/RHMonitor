@@ -28,42 +28,27 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.clientName = new System.Windows.Forms.Label();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.hashRateLbl = new System.Windows.Forms.Label();
             this.arfLbl = new System.Windows.Forms.Label();
             this.threadsLbl = new System.Windows.Forms.Label();
+            this.clientName = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // clientName
-            // 
-            this.clientName.AutoSize = true;
-            this.clientName.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.clientName.Location = new System.Drawing.Point(3, 0);
-            this.clientName.Name = "clientName";
-            this.clientName.Size = new System.Drawing.Size(144, 24);
-            this.clientName.TabIndex = 0;
-            this.clientName.Text = "Address";
-            // 
             // tableLayoutPanel1
             // 
-            this.tableLayoutPanel1.AutoSize = true;
-            this.tableLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.tableLayoutPanel1.ColumnCount = 8;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 15F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 1.25F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 1.25F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 1.25F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 1.25F));
+            this.tableLayoutPanel1.ColumnCount = 4;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.tableLayoutPanel1.Controls.Add(this.clientName, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.hashRateLbl, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.arfLbl, 3, 0);
             this.tableLayoutPanel1.Controls.Add(this.threadsLbl, 2, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel1.GrowStyle = System.Windows.Forms.TableLayoutPanelGrowStyle.AddColumns;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
@@ -75,11 +60,12 @@
             // 
             this.hashRateLbl.AutoSize = true;
             this.hashRateLbl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.hashRateLbl.Location = new System.Drawing.Point(153, 0);
+            this.hashRateLbl.Location = new System.Drawing.Point(128, 0);
             this.hashRateLbl.Name = "hashRateLbl";
-            this.hashRateLbl.Size = new System.Drawing.Size(144, 24);
+            this.hashRateLbl.Size = new System.Drawing.Size(119, 24);
             this.hashRateLbl.TabIndex = 1;
             this.hashRateLbl.Text = "HashRate";
+            this.hashRateLbl.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // arfLbl
             // 
@@ -87,19 +73,32 @@
             this.arfLbl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.arfLbl.Location = new System.Drawing.Point(378, 0);
             this.arfLbl.Name = "arfLbl";
-            this.arfLbl.Size = new System.Drawing.Size(94, 24);
+            this.arfLbl.Size = new System.Drawing.Size(119, 24);
             this.arfLbl.TabIndex = 2;
             this.arfLbl.Text = "A / R / F";
+            this.arfLbl.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // threadsLbl
             // 
             this.threadsLbl.AutoSize = true;
             this.threadsLbl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.threadsLbl.Location = new System.Drawing.Point(303, 0);
+            this.threadsLbl.Location = new System.Drawing.Point(253, 0);
             this.threadsLbl.Name = "threadsLbl";
-            this.threadsLbl.Size = new System.Drawing.Size(69, 24);
+            this.threadsLbl.Size = new System.Drawing.Size(119, 24);
             this.threadsLbl.TabIndex = 3;
             this.threadsLbl.Text = "Threads";
+            this.threadsLbl.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // clientName
+            // 
+            this.clientName.AutoSize = true;
+            this.clientName.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.clientName.Location = new System.Drawing.Point(3, 0);
+            this.clientName.Name = "clientName";
+            this.clientName.Size = new System.Drawing.Size(119, 24);
+            this.clientName.TabIndex = 0;
+            this.clientName.Text = "Address";
+            this.clientName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // ClientInstance
             // 
@@ -115,16 +114,14 @@
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
-
-        private System.Windows.Forms.Label clientName;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Label hashRateLbl;
         private System.Windows.Forms.Label arfLbl;
         private System.Windows.Forms.Label threadsLbl;
+        private System.Windows.Forms.Label clientName;
     }
 }
