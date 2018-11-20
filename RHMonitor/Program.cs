@@ -28,30 +28,27 @@ namespace RHMonitor
 
     public class RPCClient
     {
+        public string DefaultPort { get; set; }
         public static SortedDictionary<string, string[]> clients = new SortedDictionary<string, string[]>(new IPComparer());
 
         public RPCClient()
         {
-            StartListener();
+            DefaultPort = "7111";
+            StartListener(DefaultPort);
             System.Threading.Timer tm = new System.Threading.Timer(TimerCallback);
             tm.Change(0, 10000);
         }
 
-        internal SortedDictionary<string, string[]> GetDict()
+        internal ref SortedDictionary<string, string[]> GetDict()
         {
-            return clients;
+            return ref clients;
         }
 
-        private object IPSorter(KeyValuePair<string, string[]> arg)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void TimerCallback(object state)
+        internal void TimerCallback(object state)
         {
             string localIP = GetLocalIP().ToString();
 
-            if (!String.IsNullOrEmpty(localIP))
+            if (!String.IsNullOrWhiteSpace(localIP))
             {
                 string[] gatewayIP = localIP.Split('.');
                 //host is active
@@ -63,7 +60,7 @@ namespace RHMonitor
 
                 for (int i = 1; i < 255; i++)
                 {
-                    string address = gatewayIP[0] + "." + gatewayIP[1] + "." + gatewayIP[2] + "." + i.ToString();
+                    string address = gatewayIP[0] + "." + gatewayIP[1] + "." + gatewayIP[2] + "." + i.ToString() + ":" + DefaultPort;
 
                     if (!clients.ContainsKey(address))
                         ConnectAsTcpClient(address);
@@ -71,11 +68,11 @@ namespace RHMonitor
             }
         }
         
-        static IPAddress GetLocalIP()
+        private IPAddress GetLocalIP()
         {
             using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0))
             {
-                socket.Connect("1.1.1.1", 7111);
+                socket.Connect("1.1.1.1", int.Parse(DefaultPort));
                 IPEndPoint endPoint = socket.LocalEndPoint as IPEndPoint;
                 return endPoint.Address;
             }
@@ -91,9 +88,27 @@ namespace RHMonitor
         {
             public int Compare(string x, string y)
             {
-                int xIP = int.Parse(x.Split('.')[3]);
-                int yIP = int.Parse(y.Split('.')[3]);
-                return xIP.CompareTo(yIP);
+                int temp = 0;
+                IPAddress xIP = IPAddress.Parse(x.Split(':')[0]);
+                IPAddress yIP = IPAddress.Parse(y.Split(':')[0]);
+
+                if (xIP.Equals(yIP))
+                {
+                    temp = int.Parse(x.Split(':')[1]).CompareTo(int.Parse(y.Split(':')[1]));
+                }
+                else
+                {
+                    int i = 0;
+                    var x_array = x.Split(".:".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+                    var y_array = y.Split(".:".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+
+                    while (i < Math.Min(x_array.Length, y_array.Length) && temp == 0)
+                    {
+                        temp = int.Parse(x_array[i]).CompareTo(int.Parse(y_array[i]));
+                        i++;
+                    }
+                }
+                return temp;
             }
         }
 
@@ -101,12 +116,9 @@ namespace RHMonitor
         {
             try
             {
-                using (var tcpClient = new TcpClient())
+                using (var tcpClient = new TcpClient() { SendTimeout = 2000, ReceiveTimeout = 2000 })
                 {
-                    await tcpClient.ConnectAsync(address, 7111);
-
-                    if (!clients.ContainsKey(address))
-                        clients.Add(address, null);
+                    await tcpClient.ConnectAsync(address.Split(':')[0], int.Parse(address.Split(':')[1]));
 
                     Console.WriteLine("Connected to " + address);
 
@@ -118,7 +130,12 @@ namespace RHMonitor
                         var byteCount = await networkStream.ReadAsync(buffer, 0, buffer.Length);
                         var response = Encoding.UTF8.GetString(buffer, 0, byteCount);
 
-                        if (!String.IsNullOrEmpty(response))
+                        if (String.IsNullOrWhiteSpace(response.Trim()))
+                        {
+                            if (clients.ContainsKey(address))
+                                clients.Remove(address);
+                        }
+                        else
                             ParseResponse(tcpClient.Client.RemoteEndPoint.ToString(), response);
 
                         Console.WriteLine("Client response was {0}", response);
@@ -137,25 +154,24 @@ namespace RHMonitor
         {
             lock (clients)
             {
-                if (clients.ContainsKey(address))
+                if (clients.Keys.Contains(address))
                     clients.Remove(address);
             }
         }
 
-        private static void ParseResponse(string ip, string response)
+        private static void ParseResponse(string address, string response)
         {
             string[] args = response.Replace("\"","").Split("{[]},\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Skip(1).ToArray();
-            string name = ip.Split(':')[0];
 
-            if (clients.ContainsKey(name))
-                clients[name] = args;
+            if (clients.ContainsKey(address))
+                clients[address] = args;
             else
-                clients.Add(name, args);
+                clients.Add(address, args);
         }
 
-        private static async void StartListener()
+        private static async void StartListener(string port)
         {
-            var tcpListener = TcpListener.Create(7111);
+            var tcpListener = TcpListener.Create(int.Parse(port));
             tcpListener.Start();
             var tcpClient = await tcpListener.AcceptTcpClientAsync();
             Console.WriteLine("[Server] Client has connected");

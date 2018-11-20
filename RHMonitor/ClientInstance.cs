@@ -37,13 +37,37 @@ namespace RHMonitor
         public ClientInstance(string name, string[] response) : this()
         {
             this.Name = name;
-            hashRateLbl.Text = "0 H/s";
+            hashrateLbl.Text = "0 H/s";
             arfLbl.Text = "0 / 0 / 0";
             threadsLbl.Text = "0";
-            clientName.Text = name;
+            addressLbl.Text = name;
             SetAllFields(response);
 
             this.Dock = DockStyle.Top;
+        }
+
+        public string Payload
+        {
+            set
+            {
+                payloadLbl.Text = value;
+            }
+        }
+
+        public string Username
+        {
+            set
+            {
+                usernameLbl.Text = value;
+            }
+        }
+
+        public string ClientName
+        {
+            set
+            {
+                addressLbl.Text = value;
+            }
         }
 
         public void SetAllFields(string[] response)
@@ -61,14 +85,8 @@ namespace RHMonitor
             HashRate = info["speed"];
             ARF = new string[] { info["accepted"], info["rejected"], info["failed"] };
             Threads = info["threads"];
-        }
-
-        public string ClientName
-        {
-            set
-            {
-                clientName.Text = value;
-            }
+            Username = info["stratum.user"];
+            Payload = info["extrapayload"];
         }
 
         public int GetHashRate()
@@ -80,11 +98,14 @@ namespace RHMonitor
         {
             set
             {
+                if (int.Parse(value) == 0)
+                    return;
+
                 hashRates.Add(int.Parse(value));
                 while (hashRates.Count > 1000)
                     hashRates.RemoveAt(0);
 
-                hashRateLbl.Text = String.Format("{0} H/s", this.GetAverageHashRate());
+                hashrateLbl.Text = String.Format("{0} H/s", this.GetAverageHashRate());
             }
         }
 

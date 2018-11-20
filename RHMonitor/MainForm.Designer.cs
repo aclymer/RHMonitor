@@ -33,16 +33,16 @@ namespace RHMonitor
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.groupClients = new System.Windows.Forms.Panel();
             this.listBoxClients = new System.Windows.Forms.TableLayoutPanel();
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.alwaysOnTop = new System.Windows.Forms.ToolStripMenuItem();
+            this.defaultPortTextBox = new System.Windows.Forms.ToolStripTextBox();
+            this.deaultPortToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.manualIPTextBox = new System.Windows.Forms.ToolStripTextBox();
             this.clientInstance1 = new RHMonitor.ClientInstance();
-            this.numberOfClients = new System.Windows.Forms.ToolStripStatusLabel();
-            this.totalThreads = new System.Windows.Forms.ToolStripStatusLabel();
-            this.acceptedBlocks = new System.Windows.Forms.ToolStripStatusLabel();
-            this.averageHashRate = new System.Windows.Forms.ToolStripStatusLabel();
-            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.statusBar = new RHMonitor.ClientInstance();
             this.groupClients.SuspendLayout();
-            this.listBoxClients.SuspendLayout();
-            this.statusStrip1.SuspendLayout();
+            this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupClients
@@ -51,12 +51,13 @@ namespace RHMonitor
             this.groupClients.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.groupClients.Controls.Add(this.listBoxClients);
             this.groupClients.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupClients.Location = new System.Drawing.Point(0, 0);
-            this.groupClients.MinimumSize = new System.Drawing.Size(4, 100);
+            this.groupClients.Location = new System.Drawing.Point(0, 61);
+            this.groupClients.MinimumSize = new System.Drawing.Size(4, 12);
             this.groupClients.Name = "groupClients";
-            this.groupClients.Size = new System.Drawing.Size(660, 200);
+            this.groupClients.Size = new System.Drawing.Size(698, 95);
             this.groupClients.TabIndex = 0;
             this.groupClients.TabStop = true;
+            this.groupClients.Scroll += new System.Windows.Forms.ScrollEventHandler(this.groupClients_Scroll);
             // 
             // listBoxClients
             // 
@@ -64,14 +65,85 @@ namespace RHMonitor
             this.listBoxClients.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.listBoxClients.ColumnCount = 1;
             this.listBoxClients.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.listBoxClients.Controls.Add(this.clientInstance1, 0, 0);
             this.listBoxClients.Dock = System.Windows.Forms.DockStyle.Top;
             this.listBoxClients.Location = new System.Drawing.Point(0, 0);
             this.listBoxClients.Name = "listBoxClients";
             this.listBoxClients.RowCount = 1;
             this.listBoxClients.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.listBoxClients.Size = new System.Drawing.Size(656, 30);
+            this.listBoxClients.Size = new System.Drawing.Size(694, 0);
             this.listBoxClients.TabIndex = 0;
+            // 
+            // menuStrip1
+            // 
+            this.menuStrip1.ImageScalingSize = new System.Drawing.Size(24, 24);
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.optionsToolStripMenuItem,
+            this.defaultPortTextBox,
+            this.deaultPortToolStripMenuItem,
+            this.manualIPTextBox});
+            this.menuStrip1.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
+            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Size = new System.Drawing.Size(698, 35);
+            this.menuStrip1.TabIndex = 7;
+            this.menuStrip1.Text = "menuStrip1";
+            // 
+            // optionsToolStripMenuItem
+            // 
+            this.optionsToolStripMenuItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.alwaysOnTop});
+            this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(88, 31);
+            this.optionsToolStripMenuItem.Text = "&Options";
+            // 
+            // alwaysOnTop
+            // 
+            this.alwaysOnTop.CheckOnClick = true;
+            this.alwaysOnTop.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.alwaysOnTop.ImageAlign = System.Drawing.ContentAlignment.TopLeft;
+            this.alwaysOnTop.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.alwaysOnTop.Name = "alwaysOnTop";
+            this.alwaysOnTop.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.T)));
+            this.alwaysOnTop.Size = new System.Drawing.Size(271, 30);
+            this.alwaysOnTop.Text = "Always on &Top";
+            this.alwaysOnTop.TextAlign = System.Drawing.ContentAlignment.TopLeft;
+            this.alwaysOnTop.CheckStateChanged += new System.EventHandler(this.alwaysOnTop_CheckStateChanged);
+            // 
+            // defaultPortTextBox
+            // 
+            this.defaultPortTextBox.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.defaultPortTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.defaultPortTextBox.Margin = new System.Windows.Forms.Padding(1, 0, 3, 0);
+            this.defaultPortTextBox.MaxLength = 5;
+            this.defaultPortTextBox.Name = "defaultPortTextBox";
+            this.defaultPortTextBox.Size = new System.Drawing.Size(65, 31);
+            this.defaultPortTextBox.Text = "7111";
+            this.defaultPortTextBox.TextBoxTextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.defaultPortTextBox.ToolTipText = "Enter a new default port here";
+            this.defaultPortTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.defaultPortTextBox_KeyPress);
+            this.defaultPortTextBox.Click += new System.EventHandler(this.defaultPortTextBox_Click);
+            // 
+            // deaultPortToolStripMenuItem
+            // 
+            this.deaultPortToolStripMenuItem.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.deaultPortToolStripMenuItem.Enabled = false;
+            this.deaultPortToolStripMenuItem.Name = "deaultPortToolStripMenuItem";
+            this.deaultPortToolStripMenuItem.Size = new System.Drawing.Size(122, 31);
+            this.deaultPortToolStripMenuItem.Text = "Default Port:";
+            // 
+            // manualIPTextBox
+            // 
+            this.manualIPTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.manualIPTextBox.MaxLength = 150;
+            this.manualIPTextBox.Name = "manualIPTextBox";
+            this.manualIPTextBox.Size = new System.Drawing.Size(370, 31);
+            this.manualIPTextBox.Text = "Enter manual IP address here (127.0.0.1:7111)";
+            this.manualIPTextBox.TextBoxTextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.manualIPTextBox.WordWrap = false;
+            this.manualIPTextBox.Leave += new System.EventHandler(this.manualIPTextBox_Leave);
+            this.manualIPTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.manualIPTextBox_KeyPress);
+            this.manualIPTextBox.Click += new System.EventHandler(this.manualIPTextBox_Click);
             // 
             // clientInstance1
             // 
@@ -79,110 +151,46 @@ namespace RHMonitor
             this.clientInstance1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.clientInstance1.Dock = System.Windows.Forms.DockStyle.Top;
             this.clientInstance1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.clientInstance1.Location = new System.Drawing.Point(3, 3);
+            this.clientInstance1.Location = new System.Drawing.Point(0, 35);
             this.clientInstance1.MinimumSize = new System.Drawing.Size(500, 24);
             this.clientInstance1.Name = "clientInstance1";
-            this.clientInstance1.Size = new System.Drawing.Size(650, 24);
+            this.clientInstance1.Padding = new System.Windows.Forms.Padding(3);
+            this.clientInstance1.Size = new System.Drawing.Size(698, 26);
             this.clientInstance1.TabIndex = 0;
             // 
-            // numberOfClients
+            // statusBar
             // 
-            this.numberOfClients.AutoSize = false;
-            this.numberOfClients.BorderStyle = System.Windows.Forms.Border3DStyle.Etched;
-            this.numberOfClients.Margin = new System.Windows.Forms.Padding(8, 2, -4, 2);
-            this.numberOfClients.Name = "numberOfClients";
-            this.numberOfClients.Padding = new System.Windows.Forms.Padding(2, 0, 0, 0);
-            this.numberOfClients.Size = new System.Drawing.Size(157, 26);
-            this.numberOfClients.Spring = true;
-            this.numberOfClients.Text = "Clients: 0";
-            // 
-            // totalThreads
-            // 
-            this.totalThreads.AutoSize = false;
-            this.totalThreads.BorderStyle = System.Windows.Forms.Border3DStyle.Etched;
-            this.totalThreads.Margin = new System.Windows.Forms.Padding(8, 2, -4, 2);
-            this.totalThreads.Name = "totalThreads";
-            this.totalThreads.Padding = new System.Windows.Forms.Padding(2, 0, 0, 0);
-            this.totalThreads.Size = new System.Drawing.Size(157, 26);
-            this.totalThreads.Spring = true;
-            this.totalThreads.Text = "0";
-            // 
-            // acceptedBlocks
-            // 
-            this.acceptedBlocks.AutoSize = false;
-            this.acceptedBlocks.BorderStyle = System.Windows.Forms.Border3DStyle.Etched;
-            this.acceptedBlocks.Margin = new System.Windows.Forms.Padding(8, 2, -4, 2);
-            this.acceptedBlocks.Name = "acceptedBlocks";
-            this.acceptedBlocks.Padding = new System.Windows.Forms.Padding(2, 0, 0, 0);
-            this.acceptedBlocks.Size = new System.Drawing.Size(157, 26);
-            this.acceptedBlocks.Spring = true;
-            this.acceptedBlocks.Text = "0 / 0 / 0";
-            // 
-            // averageHashRate
-            // 
-            this.averageHashRate.AutoSize = false;
-            this.averageHashRate.BorderStyle = System.Windows.Forms.Border3DStyle.Etched;
-            this.averageHashRate.Margin = new System.Windows.Forms.Padding(8, 2, -4, 2);
-            this.averageHashRate.Name = "averageHashRate";
-            this.averageHashRate.Padding = new System.Windows.Forms.Padding(2, 0, 0, 0);
-            this.averageHashRate.Size = new System.Drawing.Size(157, 26);
-            this.averageHashRate.Spring = true;
-            this.averageHashRate.Text = "0 H/s";
-            this.averageHashRate.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // statusStrip1
-            // 
-            this.statusStrip1.ImageScalingSize = new System.Drawing.Size(24, 24);
-            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.numberOfClients,
-            this.averageHashRate,
-            this.totalThreads,
-            this.acceptedBlocks});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 226);
-            this.statusStrip1.Margin = new System.Windows.Forms.Padding(4, 0, 0, 0);
-            this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.ShowItemToolTips = true;
-            this.statusStrip1.Size = new System.Drawing.Size(660, 30);
-            this.statusStrip1.SizingGrip = false;
-            this.statusStrip1.TabIndex = 6;
-            this.statusStrip1.Text = "statusStrip1";
-            // 
-            // textBox1
-            // 
-            this.textBox1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.textBox1.Location = new System.Drawing.Point(0, 200);
-            this.textBox1.MaxLength = 150;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(660, 26);
-            this.textBox1.TabIndex = 1;
-            this.textBox1.Text = "Enter manual IP address here";
-            this.textBox1.WordWrap = false;
-            this.textBox1.Click += new System.EventHandler(this.textBox1_Click);
-            this.textBox1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox1_KeyPress);
-            this.textBox1.Leave += new System.EventHandler(this.textBox1_Leave);
+            this.statusBar.AutoSize = true;
+            this.statusBar.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.statusBar.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.statusBar.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.statusBar.Location = new System.Drawing.Point(0, 156);
+            this.statusBar.MinimumSize = new System.Drawing.Size(500, 24);
+            this.statusBar.Name = "statusBar";
+            this.statusBar.Padding = new System.Windows.Forms.Padding(3);
+            this.statusBar.Size = new System.Drawing.Size(698, 26);
+            this.statusBar.TabIndex = 8;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(660, 256);
+            this.ClientSize = new System.Drawing.Size(698, 182);
             this.Controls.Add(this.groupClients);
-            this.Controls.Add(this.textBox1);
-            this.Controls.Add(this.statusStrip1);
+            this.Controls.Add(this.clientInstance1);
+            this.Controls.Add(this.statusBar);
+            this.Controls.Add(this.menuStrip1);
             this.DoubleBuffered = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MaximumSize = new System.Drawing.Size(850, 2000);
-            this.MinimumSize = new System.Drawing.Size(682, 212);
+            this.MainMenuStrip = this.menuStrip1;
+            this.MinimumSize = new System.Drawing.Size(720, 238);
             this.Name = "MainForm";
             this.Text = "RHMonitor by MasterOfNone  Donate@ 282527-57";
-            this.TopMost = true;
             this.groupClients.ResumeLayout(false);
             this.groupClients.PerformLayout();
-            this.listBoxClients.ResumeLayout(false);
-            this.listBoxClients.PerformLayout();
-            this.statusStrip1.ResumeLayout(false);
-            this.statusStrip1.PerformLayout();
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -192,13 +200,14 @@ namespace RHMonitor
 
         private System.Windows.Forms.Panel groupClients;
         internal System.Windows.Forms.TableLayoutPanel listBoxClients;
-        private System.Windows.Forms.ToolStripStatusLabel numberOfClients;
-        private System.Windows.Forms.ToolStripStatusLabel totalThreads;
-        private System.Windows.Forms.ToolStripStatusLabel acceptedBlocks;
-        private System.Windows.Forms.ToolStripStatusLabel averageHashRate;
-        private System.Windows.Forms.StatusStrip statusStrip1;
         private ClientInstance clientInstance1;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem deaultPortToolStripMenuItem;
+        private System.Windows.Forms.ToolStripTextBox defaultPortTextBox;
+        private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem alwaysOnTop;
+        private ClientInstance statusBar;
+        private System.Windows.Forms.ToolStripTextBox manualIPTextBox;
     }
 }
 

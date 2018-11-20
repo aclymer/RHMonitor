@@ -30,6 +30,7 @@ namespace RHMonitor
 
         delegate void DictArgReturningVoidDelegate(SortedDictionary<string, string[]> text);
 
+        Point scrollPos = new Point();
         RPCClient rpcclient;
         SortedDictionary<string, string[]> clients;
         List<int> HashRates = new List<int>();
@@ -38,8 +39,12 @@ namespace RHMonitor
         {
             InitializeComponent();
             rpcclient = client;
+            statusBar.Username = "";
+            statusBar.Payload = "";
+            clients = rpcclient.GetDict();
+            defaultPortTextBox.Text = client.DefaultPort;
             System.Threading.Timer tm = new System.Threading.Timer(TimerCallback);
-            tm.Change(0, 1000);
+            tm.Change(0, 5000);
         }
 
         private void TimerCallback(object state)
@@ -64,6 +69,7 @@ namespace RHMonitor
                 int threadSum = 0;
                 int[] arf = { 0, 0, 0 };
                 string[] keys = this.clients.Keys.ToArray();
+                groupClients.SuspendLayout();
 
                 for (int i = 0; i < keys.Length; i++)
                 {
@@ -74,23 +80,24 @@ namespace RHMonitor
 
                     try
                     {
-                        var item = new ClientInstance(clientName, this.clients[keys[i]]);
+                        ClientInstance item = null;
 
                         foreach (ClientInstance cntrl in listBoxClients.Controls)
                         {
-                            if (cntrl.Name == item.Name)
+                            if (cntrl.Name == clientName)
                             {
                                 item = cntrl;
                                 break;
                             }
                         }
 
+                        if (item == null)
+                            item = new ClientInstance(clientName, this.clients[keys[i]]);
+
                         if (listBoxClients.Controls.Contains(item))
                             item.SetAllFields(this.clients[keys[i]]);
                         else
-                        {
-                            this.listBoxClients.Controls.Add(item, 0, 1 + clients.Keys.ToList().IndexOf(item.Name)); // Don't move the header row 0
-                        }
+                            this.listBoxClients.Controls.Add(item, 0, clients.Keys.ToList().IndexOf(item.Name));
 
                         rateSum += item.GetHashRate();
                         threadSum += item.GetThreads();
@@ -109,25 +116,31 @@ namespace RHMonitor
                     }
                 }
 
-                if (this.clients.Count < listBoxClients.Controls.Count - 1)
+                if (this.clients.Count < listBoxClients.Controls.Count)
                 {
                     ClientInstance client = null;
                     foreach (ClientInstance instance in listBoxClients.Controls)
                     {
                         if (!this.clients.ContainsKey(instance.Name))
+                        {
                             client = instance;
+                            break;
+                        }
                     }
 
                     if (client != null)
                         listBoxClients.Controls.Remove(client);
                 }
 
-                HashRates.Add(rateSum);
-                totalThreads.Text = threadSum.ToString();
-                averageHashRate.Text = String.Format("{0} H/s", GetAverageHashRate());
-                acceptedBlocks.Text = String.Format("{0} / {1} / {2}", arf[0], arf[1], arf[2]);
-                numberOfClients.Text = String.Format("Clients: {0}", this.clients.Count.ToString());
-                listBoxClients.Update();
+                if (rateSum > 0)
+                    HashRates.Add(rateSum);
+
+                statusBar.Threads = threadSum.ToString();
+                statusBar.HashRate = GetAverageHashRate().ToString();
+                statusBar.ARF = new string[] { arf[0].ToString(), arf[1].ToString(), arf[2].ToString() };
+                statusBar.ClientName = String.Format("Clients: {0}", this.clients.Count.ToString());
+                groupClients.AutoScrollPosition = scrollPos;
+                groupClients.ResumeLayout();
             }
         }
 
@@ -139,29 +152,30 @@ namespace RHMonitor
             return HashRates.Sum() / HashRates.Count;
         }
 
-        private void textBox1_Click(object sender, EventArgs e)
+        private void manualIPTextBox_Click(object sender, EventArgs e)
         {
-            textBox1.Clear();
+            manualIPTextBox.Clear();
         }
 
-        private void textBox1_KeyPress(object sender, KeyPressEventArgs e)
+        private void manualIPTextBox_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (e.KeyChar == (char)System.ConsoleKey.Enter)
             {
                 System.Net.IPAddress ip;
+                string address = manualIPTextBox.Text;
 
-                if (System.Net.IPAddress.TryParse(textBox1.Text, out ip))
-                    Program.client.ConnectAsTcpClient(ip.ToString());
+                if (System.Net.IPAddress.TryParse(address.Split(':')[0].Trim(), out ip))
+                    Program.client.ConnectAsTcpClient(address);
 
-                textBox1.Text = "Enter manual IP address here";
-                this.SelectNextControl(textBox1, false, true, true, true);
+                manualIPTextBox.Text = "Enter manual IP address here (127.0.0.1:7111)";
+                this.SelectNextControl(manualIPTextBox.Control, false, true, true, true);
             }
             else if (e.KeyChar == (char)System.ConsoleKey.Escape)
             { 
-                textBox1.Text = "Enter manual IP address here";
-                this.SelectNextControl(textBox1, false, true, true, true);
+                manualIPTextBox.Text = "Enter manual IP address here (127.0.0.1:7111)";
+                this.SelectNextControl(manualIPTextBox.Control, false, true, true, true);
             }
-            else if (!"0123456789.".ToCharArray().Contains(e.KeyChar))
+            else if (!"0123456789.:".ToCharArray().Contains(e.KeyChar))
             {
                 e.Handled = true;
             }
@@ -169,9 +183,43 @@ namespace RHMonitor
                 e.Handled = false;
         }
 
-        private void textBox1_Leave(object sender, EventArgs e)
+        private void manualIPTextBox_Leave(object sender, EventArgs e)
         {
-            textBox1.Text = "Enter manual IP address here";
+            manualIPTextBox.Text = "Enter manual IP address here (127.0.0.1:7111)";
+        }
+
+        private void groupClients_Scroll(object sender, ScrollEventArgs e)
+        {
+            scrollPos.Y = e.NewValue;
+        }
+
+        private void defaultPortTextBox_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)System.ConsoleKey.Enter)
+            {
+                Program.client.DefaultPort = defaultPortTextBox.Text;
+                this.SelectNextControl(defaultPortTextBox.Control, false, true, true, true);
+                Program.client.TimerCallback(null);
+            }
+            else if (e.KeyChar == (char)System.ConsoleKey.Escape)
+            {
+                defaultPortTextBox.Text = Program.client.DefaultPort;
+                this.SelectNextControl(defaultPortTextBox.Control, false, true, true, true);
+            }
+            else if (!"0123456789".ToCharArray().Contains(e.KeyChar))
+                e.Handled = true;
+            else
+                e.Handled = false;
+        }
+
+        private void defaultPortTextBox_Click(object sender, EventArgs e)
+        {
+            defaultPortTextBox.Clear();
+        }
+
+        private void alwaysOnTop_CheckStateChanged(object sender, EventArgs e)
+        {
+            MainForm.ActiveForm.TopMost = alwaysOnTop.Checked;
         }
     }
 }
