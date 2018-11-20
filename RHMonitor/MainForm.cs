@@ -103,6 +103,10 @@ namespace RHMonitor
                         listBoxClients.Controls.RemoveByKey(clientName);
                         continue;
                     }
+                    catch
+                    {
+                        continue;
+                    }
                 }
 
                 if (this.clients.Count < listBoxClients.Controls.Count - 1)
