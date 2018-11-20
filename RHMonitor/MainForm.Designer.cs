@@ -33,13 +33,13 @@ namespace RHMonitor
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.groupClients = new System.Windows.Forms.Panel();
             this.listBoxClients = new System.Windows.Forms.TableLayoutPanel();
+            this.clientInstance1 = new RHMonitor.ClientInstance();
             this.numberOfClients = new System.Windows.Forms.ToolStripStatusLabel();
             this.totalThreads = new System.Windows.Forms.ToolStripStatusLabel();
             this.acceptedBlocks = new System.Windows.Forms.ToolStripStatusLabel();
             this.averageHashRate = new System.Windows.Forms.ToolStripStatusLabel();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.textBox1 = new System.Windows.Forms.TextBox();
-            this.clientInstance1 = new RHMonitor.ClientInstance();
             this.groupClients.SuspendLayout();
             this.listBoxClients.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -56,6 +56,7 @@ namespace RHMonitor
             this.groupClients.Name = "groupClients";
             this.groupClients.Size = new System.Drawing.Size(660, 200);
             this.groupClients.TabIndex = 0;
+            this.groupClients.TabStop = true;
             // 
             // listBoxClients
             // 
@@ -71,6 +72,18 @@ namespace RHMonitor
             this.listBoxClients.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.listBoxClients.Size = new System.Drawing.Size(656, 30);
             this.listBoxClients.TabIndex = 0;
+            // 
+            // clientInstance1
+            // 
+            this.clientInstance1.AutoSize = true;
+            this.clientInstance1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.clientInstance1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.clientInstance1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.clientInstance1.Location = new System.Drawing.Point(3, 3);
+            this.clientInstance1.MinimumSize = new System.Drawing.Size(500, 24);
+            this.clientInstance1.Name = "clientInstance1";
+            this.clientInstance1.Size = new System.Drawing.Size(650, 24);
+            this.clientInstance1.TabIndex = 0;
             // 
             // numberOfClients
             // 
@@ -147,18 +160,6 @@ namespace RHMonitor
             this.textBox1.Click += new System.EventHandler(this.textBox1_Click);
             this.textBox1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox1_KeyPress);
             this.textBox1.Leave += new System.EventHandler(this.textBox1_Leave);
-            // 
-            // clientInstance1
-            // 
-            this.clientInstance1.AutoSize = true;
-            this.clientInstance1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.clientInstance1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.clientInstance1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.clientInstance1.Location = new System.Drawing.Point(3, 3);
-            this.clientInstance1.MinimumSize = new System.Drawing.Size(500, 24);
-            this.clientInstance1.Name = "clientInstance1";
-            this.clientInstance1.Size = new System.Drawing.Size(650, 24);
-            this.clientInstance1.TabIndex = 0;
             // 
             // MainForm
             // 

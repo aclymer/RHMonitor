@@ -120,7 +120,7 @@ namespace RHMonitor
                 totalThreads.Text = threadSum.ToString();
                 averageHashRate.Text = String.Format("{0} H/s", GetAverageHashRate());
                 acceptedBlocks.Text = String.Format("{0} / {1} / {2}", arf[0], arf[1], arf[2]);
-                numberOfClients.Text = this.clients.Count.ToString();
+                numberOfClients.Text = String.Format("Clients: {0}", this.clients.Count.ToString());
                 listBoxClients.Update();
             }
         }
@@ -145,16 +145,22 @@ namespace RHMonitor
                 System.Net.IPAddress ip;
 
                 if (System.Net.IPAddress.TryParse(textBox1.Text, out ip))
-                {
                     Program.client.ConnectAsTcpClient(ip.ToString());
-                    textBox1.Text = "Enter manual IP address here";
-                }
+
+                textBox1.Text = "Enter manual IP address here";
+                this.SelectNextControl(textBox1, false, true, true, true);
             }
-            if (!"0123456789.".ToCharArray().Contains(e.KeyChar))
+            else if (e.KeyChar == (char)System.ConsoleKey.Escape)
+            { 
+                textBox1.Text = "Enter manual IP address here";
+                this.SelectNextControl(textBox1, false, true, true, true);
+            }
+            else if (!"0123456789.".ToCharArray().Contains(e.KeyChar))
             {
                 e.Handled = true;
-                return;
             }
+            else
+                e.Handled = false;
         }
 
         private void textBox1_Leave(object sender, EventArgs e)
