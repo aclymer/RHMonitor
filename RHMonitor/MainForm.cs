@@ -165,7 +165,12 @@ namespace RHMonitor
                 string address = manualIPTextBox.Text;
 
                 if (System.Net.IPAddress.TryParse(address.Split(':')[0].Trim(), out ip))
+                {
+                    if (!address.Contains(":"))
+                        address += ":" + Program.client.DefaultPort;
+
                     Program.client.ConnectAsTcpClient(address);
+                }
 
                 manualIPTextBox.Text = "Enter manual IP address here (127.0.0.1:7111)";
                 this.SelectNextControl(manualIPTextBox.Control, false, true, true, true);
@@ -175,7 +180,10 @@ namespace RHMonitor
                 manualIPTextBox.Text = "Enter manual IP address here (127.0.0.1:7111)";
                 this.SelectNextControl(manualIPTextBox.Control, false, true, true, true);
             }
-            else if (!"0123456789.:".ToCharArray().Contains(e.KeyChar))
+            else if (!"0123456789.:".ToCharArray().Contains(e.KeyChar) ||
+                e.KeyChar == (char)System.ConsoleKey.Backspace ||
+                e.KeyChar == (char)System.ConsoleKey.LeftArrow ||
+                e.KeyChar == (char)System.ConsoleKey.RightArrow)
             {
                 e.Handled = true;
             }
@@ -215,7 +223,10 @@ namespace RHMonitor
                 defaultPortTextBox.Text = Program.client.DefaultPort;
                 this.SelectNextControl(defaultPortTextBox.Control, false, true, true, true);
             }
-            else if (!"0123456789".ToCharArray().Contains(e.KeyChar))
+            else if (!"0123456789".ToCharArray().Contains(e.KeyChar) ||
+                e.KeyChar == (char)System.ConsoleKey.Backspace ||
+                e.KeyChar == (char)System.ConsoleKey.LeftArrow ||
+                e.KeyChar == (char)System.ConsoleKey.RightArrow)
                 e.Handled = true;
             else
                 e.Handled = false;

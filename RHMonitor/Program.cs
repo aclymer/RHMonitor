@@ -127,11 +127,11 @@ namespace RHMonitor
                     {
                         await networkStream.WriteAsync(ClientRequestBytes, 0, ClientRequestBytes.Length);
 
-                        var buffer = new byte[512];
+                        var buffer = new byte[2048];
                         var byteCount = await networkStream.ReadAsync(buffer, 0, buffer.Length);
                         var response = Encoding.UTF8.GetString(buffer, 0, byteCount);
 
-                        if (String.IsNullOrWhiteSpace(response.Trim()))
+                        if (String.IsNullOrWhiteSpace(response.Trim()) || !response.Contains("info"))
                         {
                             if (clients.ContainsKey(address))
                                 clients.Remove(address);
@@ -162,8 +162,16 @@ namespace RHMonitor
 
         private static void ParseResponse(string address, string response)
         {
-            string[] args = response.Replace("\"","").Split("{[]},\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Skip(1).ToArray();
+            string[] temp = response.Replace("\"", "").Split("[]".ToCharArray());
+            int threads = 0;
 
+            foreach (var pair in temp[1].Split("{},\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries))
+            {
+                if (pair.Contains("threads"))
+                    threads += int.Parse(pair.Split(':')[1].Trim());
+            }
+            string[] args = (String.Format("threads:{0},", threads) + temp[2]).Split("{},\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+            
             if (clients.ContainsKey(address))
                 clients[address] = args;
             else
