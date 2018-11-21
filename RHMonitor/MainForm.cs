@@ -44,7 +44,7 @@ namespace RHMonitor
             clients = rpcclient.GetDict();
             defaultPortTextBox.Text = client.DefaultPort;
             System.Threading.Timer tm = new System.Threading.Timer(TimerCallback);
-            tm.Change(0, 5000);
+            tm.Change(0, 1000);
         }
 
         private void TimerCallback(object state)
@@ -197,6 +197,15 @@ namespace RHMonitor
         {
             if (e.KeyChar == (char)System.ConsoleKey.Enter)
             {
+                int temp = -1;
+
+                if (!int.TryParse(defaultPortTextBox.Text, out temp))
+                {
+                    defaultPortTextBox.Text = Program.client.DefaultPort;
+                    e.Handled = false;
+                    return;
+                }
+
                 Program.client.DefaultPort = defaultPortTextBox.Text;
                 this.SelectNextControl(defaultPortTextBox.Control, false, true, true, true);
                 Program.client.TimerCallback(null);

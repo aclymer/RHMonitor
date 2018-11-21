@@ -28,6 +28,7 @@ namespace RHMonitor
 
     public class RPCClient
     {
+        private string localIP;
         public string DefaultPort { get; set; }
         public static SortedDictionary<string, string[]> clients = new SortedDictionary<string, string[]>(new IPComparer());
 
@@ -37,6 +38,7 @@ namespace RHMonitor
             StartListener(DefaultPort);
             System.Threading.Timer tm = new System.Threading.Timer(TimerCallback);
             tm.Change(0, 10000);
+            localIP = GetLocalIP().ToString();
         }
 
         internal ref SortedDictionary<string, string[]> GetDict()
@@ -46,11 +48,10 @@ namespace RHMonitor
 
         internal void TimerCallback(object state)
         {
-            string localIP = GetLocalIP().ToString();
-
             if (!String.IsNullOrWhiteSpace(localIP))
             {
                 string[] gatewayIP = localIP.Split('.');
+
                 //host is active
                 for (int i = 0; i < clients.Count; i++)
                 {
