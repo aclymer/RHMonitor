@@ -65,82 +65,85 @@ namespace RHMonitor
             }
             else
             {
-                int rateSum = 0;
-                int threadSum = 0;
-                int[] arf = { 0, 0, 0 };
-                string[] keys = this.clients.Keys.ToArray();
-                groupClients.SuspendLayout();
-
-                for (int i = 0; i < keys.Length; i++)
+                lock (listBoxClients)
                 {
-                    string clientName = keys[i];
+                    int rateSum = 0;
+                    int threadSum = 0;
+                    int[] arf = { 0, 0, 0 };
+                    string[] keys = this.clients.Keys.ToArray();
+                    groupClients.SuspendLayout();
 
-                    if (clientName == null)
-                        continue;
-
-                    try
+                    for (int i = 0; i < keys.Length; i++)
                     {
-                        ClientInstance item = null;
+                        string clientName = keys[i];
 
-                        foreach (ClientInstance cntrl in listBoxClients.Controls)
+                        if (clientName == null)
+                            continue;
+
+                        try
                         {
-                            if (cntrl.Name == clientName)
+                            ClientInstance item = null;
+
+                            foreach (ClientInstance cntrl in listBoxClients.Controls)
                             {
-                                item = cntrl;
+                                if (cntrl.Name == clientName)
+                                {
+                                    item = cntrl;
+                                    break;
+                                }
+                            }
+
+                            if (item == null)
+                                item = new ClientInstance(clientName, this.clients[keys[i]]);
+
+                            if (listBoxClients.Controls.Contains(item))
+                                item.SetAllFields(this.clients[keys[i]]);
+                            else
+                                this.listBoxClients.Controls.Add(item, 0, clients.Keys.ToList().IndexOf(item.Name));
+
+                            rateSum += item.GetHashRate();
+                            threadSum += item.GetThreads();
+                            var temp = item.GetARF();
+                            arf = new int[] { arf[0] + temp[0], arf[1] + temp[1], arf[2] + temp[2] };
+                        }
+                        catch (KeyNotFoundException e)
+                        {
+                            e.Equals(e);
+                            listBoxClients.Controls.RemoveByKey(clientName);
+                            continue;
+                        }
+                        catch
+                        {
+                            continue;
+                        }
+                    }
+
+                    if (this.clients.Count < listBoxClients.Controls.Count)
+                    {
+                        ClientInstance client = null;
+                        foreach (ClientInstance instance in listBoxClients.Controls)
+                        {
+                            if (!this.clients.ContainsKey(instance.Name))
+                            {
+                                client = instance;
                                 break;
                             }
                         }
 
-                        if (item == null)
-                            item = new ClientInstance(clientName, this.clients[keys[i]]);
+                        if (client != null)
+                            listBoxClients.Controls.Remove(client);
+                    }
 
-                        if (listBoxClients.Controls.Contains(item))
-                            item.SetAllFields(this.clients[keys[i]]);
-                        else
-                            this.listBoxClients.Controls.Add(item, 0, clients.Keys.ToList().IndexOf(item.Name));
+                    if (rateSum > 0)
+                        HashRates.Add(rateSum);
 
-                        rateSum += item.GetHashRate();
-                        threadSum += item.GetThreads();
-                        var temp = item.GetARF();
-                        arf = new int[] { arf[0] + temp[0], arf[1] + temp[1], arf[2] + temp[2] };
-                    }
-                    catch (KeyNotFoundException e)
-                    {
-                        e.Equals(e);
-                        listBoxClients.Controls.RemoveByKey(clientName);
-                        continue;
-                    }
-                    catch
-                    {
-                        continue;
-                    }
+                    statusBar.Threads = threadSum.ToString();
+                    statusBar.HashRate = GetAverageHashRate().ToString();
+                    statusBar.ARF = new string[] { arf[0].ToString(), arf[1].ToString(), arf[2].ToString() };
+                    statusBar.ClientName = String.Format("Clients: {0}", this.clients.Count.ToString());
+                    groupClients.AutoScrollPosition = scrollPos;
+                    groupClients.ResumeLayout();
                 }
-
-                if (this.clients.Count < listBoxClients.Controls.Count)
-                {
-                    ClientInstance client = null;
-                    foreach (ClientInstance instance in listBoxClients.Controls)
-                    {
-                        if (!this.clients.ContainsKey(instance.Name))
-                        {
-                            client = instance;
-                            break;
-                        }
-                    }
-
-                    if (client != null)
-                        listBoxClients.Controls.Remove(client);
-                }
-
-                if (rateSum > 0)
-                    HashRates.Add(rateSum);
-
-                statusBar.Threads = threadSum.ToString();
-                statusBar.HashRate = GetAverageHashRate().ToString();
-                statusBar.ARF = new string[] { arf[0].ToString(), arf[1].ToString(), arf[2].ToString() };
-                statusBar.ClientName = String.Format("Clients: {0}", this.clients.Count.ToString());
-                groupClients.AutoScrollPosition = scrollPos;
-                groupClients.ResumeLayout();
             }
         }
 
@@ -240,6 +243,11 @@ namespace RHMonitor
         private void alwaysOnTop_CheckStateChanged(object sender, EventArgs e)
         {
             MainForm.ActiveForm.TopMost = alwaysOnTop.Checked;
+        }
+
+        private void donatePASCToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            new Donate().Show(this);
         }
     }
 }

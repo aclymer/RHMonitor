@@ -36,6 +36,7 @@ namespace RHMonitor
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.alwaysOnTop = new System.Windows.Forms.ToolStripMenuItem();
+            this.donatePASCToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.defaultPortTextBox = new System.Windows.Forms.ToolStripTextBox();
             this.deaultPortToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.manualIPTextBox = new System.Windows.Forms.ToolStripTextBox();
@@ -51,10 +52,10 @@ namespace RHMonitor
             this.groupClients.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.groupClients.Controls.Add(this.listBoxClients);
             this.groupClients.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupClients.Location = new System.Drawing.Point(0, 61);
+            this.groupClients.Location = new System.Drawing.Point(0, 62);
             this.groupClients.MinimumSize = new System.Drawing.Size(4, 12);
             this.groupClients.Name = "groupClients";
-            this.groupClients.Size = new System.Drawing.Size(698, 95);
+            this.groupClients.Size = new System.Drawing.Size(698, 94);
             this.groupClients.TabIndex = 0;
             this.groupClients.TabStop = true;
             this.groupClients.Scroll += new System.Windows.Forms.ScrollEventHandler(this.groupClients_Scroll);
@@ -75,6 +76,7 @@ namespace RHMonitor
             // 
             // menuStrip1
             // 
+            this.menuStrip1.BackColor = System.Drawing.SystemColors.ControlLight;
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.optionsToolStripMenuItem,
@@ -84,7 +86,8 @@ namespace RHMonitor
             this.menuStrip1.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(698, 35);
+            this.menuStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+            this.menuStrip1.Size = new System.Drawing.Size(698, 36);
             this.menuStrip1.TabIndex = 7;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -92,9 +95,10 @@ namespace RHMonitor
             // 
             this.optionsToolStripMenuItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.alwaysOnTop});
+            this.alwaysOnTop,
+            this.donatePASCToolStripMenuItem});
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(88, 31);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(88, 32);
             this.optionsToolStripMenuItem.Text = "&Options";
             // 
             // alwaysOnTop
@@ -110,11 +114,19 @@ namespace RHMonitor
             this.alwaysOnTop.TextAlign = System.Drawing.ContentAlignment.TopLeft;
             this.alwaysOnTop.CheckStateChanged += new System.EventHandler(this.alwaysOnTop_CheckStateChanged);
             // 
+            // donatePASCToolStripMenuItem
+            // 
+            this.donatePASCToolStripMenuItem.Name = "donatePASCToolStripMenuItem";
+            this.donatePASCToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D)));
+            this.donatePASCToolStripMenuItem.Size = new System.Drawing.Size(271, 30);
+            this.donatePASCToolStripMenuItem.Text = "&Donate PASC";
+            this.donatePASCToolStripMenuItem.Click += new System.EventHandler(this.donatePASCToolStripMenuItem_Click);
+            // 
             // defaultPortTextBox
             // 
             this.defaultPortTextBox.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.defaultPortTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.defaultPortTextBox.Margin = new System.Windows.Forms.Padding(1, 0, 3, 0);
+            this.defaultPortTextBox.Margin = new System.Windows.Forms.Padding(1, 0, 3, 1);
             this.defaultPortTextBox.MaxLength = 5;
             this.defaultPortTextBox.Name = "defaultPortTextBox";
             this.defaultPortTextBox.Size = new System.Drawing.Size(65, 31);
@@ -129,12 +141,13 @@ namespace RHMonitor
             this.deaultPortToolStripMenuItem.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.deaultPortToolStripMenuItem.Enabled = false;
             this.deaultPortToolStripMenuItem.Name = "deaultPortToolStripMenuItem";
-            this.deaultPortToolStripMenuItem.Size = new System.Drawing.Size(122, 31);
+            this.deaultPortToolStripMenuItem.Size = new System.Drawing.Size(122, 32);
             this.deaultPortToolStripMenuItem.Text = "Default Port:";
             // 
             // manualIPTextBox
             // 
             this.manualIPTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.manualIPTextBox.Margin = new System.Windows.Forms.Padding(1, 0, 1, 1);
             this.manualIPTextBox.MaxLength = 150;
             this.manualIPTextBox.Name = "manualIPTextBox";
             this.manualIPTextBox.Size = new System.Drawing.Size(370, 31);
@@ -151,7 +164,7 @@ namespace RHMonitor
             this.clientInstance1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.clientInstance1.Dock = System.Windows.Forms.DockStyle.Top;
             this.clientInstance1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.clientInstance1.Location = new System.Drawing.Point(0, 35);
+            this.clientInstance1.Location = new System.Drawing.Point(0, 36);
             this.clientInstance1.MinimumSize = new System.Drawing.Size(500, 24);
             this.clientInstance1.Name = "clientInstance1";
             this.clientInstance1.Padding = new System.Windows.Forms.Padding(3);
@@ -208,6 +221,7 @@ namespace RHMonitor
         private System.Windows.Forms.ToolStripMenuItem alwaysOnTop;
         private ClientInstance statusBar;
         private System.Windows.Forms.ToolStripTextBox manualIPTextBox;
+        private System.Windows.Forms.ToolStripMenuItem donatePASCToolStripMenuItem;
     }
 }
 

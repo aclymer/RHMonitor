@@ -117,7 +117,7 @@ namespace RHMonitor
         {
             try
             {
-                using (var tcpClient = new TcpClient() { SendTimeout = 2000, ReceiveTimeout = 2000 })
+                using (var tcpClient = new TcpClient() { ReceiveTimeout = 100 })
                 {
                     await tcpClient.ConnectAsync(address.Split(':')[0], int.Parse(address.Split(':')[1]));
 
@@ -146,6 +146,12 @@ namespace RHMonitor
             catch (System.Net.Sockets.SocketException e)
             {
                 NotConnected(address);
+                e.Equals(e);
+                return;
+            }
+            catch (Exception e)
+            {
+                //MessageBox.Show(e.StackTrace, e.Message);
                 e.Equals(e);
                 return;
             }
