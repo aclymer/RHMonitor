@@ -116,6 +116,7 @@ namespace RHMonitor
             // 
             // donatePASCToolStripMenuItem
             // 
+            this.donatePASCToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("donatePASCToolStripMenuItem.Image")));
             this.donatePASCToolStripMenuItem.Name = "donatePASCToolStripMenuItem";
             this.donatePASCToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D)));
             this.donatePASCToolStripMenuItem.Size = new System.Drawing.Size(271, 30);
@@ -152,7 +153,6 @@ namespace RHMonitor
             this.manualIPTextBox.Name = "manualIPTextBox";
             this.manualIPTextBox.Size = new System.Drawing.Size(370, 31);
             this.manualIPTextBox.Text = "Enter manual IP address here (127.0.0.1:7111)";
-            this.manualIPTextBox.TextBoxTextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.manualIPTextBox.WordWrap = false;
             this.manualIPTextBox.Leave += new System.EventHandler(this.manualIPTextBox_Leave);
             this.manualIPTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.manualIPTextBox_KeyPress);
