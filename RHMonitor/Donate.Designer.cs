@@ -1,4 +1,6 @@
-﻿namespace RHMonitor
+﻿using System;
+
+namespace RHMonitor
 {
     partial class Donate
     {
@@ -46,6 +48,7 @@
             // 
             // button1
             // 
+            this.button1.CausesValidation = false;
             this.button1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.button1.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F);
@@ -177,6 +180,7 @@
             this.Name = "Donate";
             this.ShowInTaskbar = false;
             this.Text = "Choose account to donate from:";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.CleanupBeforeClosing);
             this.Shown += new System.EventHandler(this.Donate_Shown);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();

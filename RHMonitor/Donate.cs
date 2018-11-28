@@ -15,17 +15,16 @@ namespace RHMonitor
     public partial class Donate : Form
     {
         internal NPascalCoin.RPC.PascalCoinClient PascClient;
-
+        
         public Donate()
         {
             InitializeComponent();
         }
 
-        private void Donate_Shown(object sender, EventArgs e)
+        private void LoadAccounts()
         {
             PascClient = new NPascalCoin.RPC.PascalCoinClient();
             var accounts = PascClient.GetWalletAccounts();
-
             accounts = accounts.Where(x => { return x.Balance >= 1; }).ToArray<NPascalCoin.DTO.AccountDTO>();
 
             foreach (var account in accounts)
@@ -37,6 +36,17 @@ namespace RHMonitor
 
             senderAccountListView.Columns[0].Width = tableLayoutPanel1.Width / 2 - 10;
             senderAccountListView.Columns[1].Width = tableLayoutPanel1.Width / 2 - 10;
+        }
+
+
+        private void Donate_Shown(object sender, EventArgs e)
+        {
+            LoadAccounts();
+        }
+
+        private void CleanupBeforeClosing(object sender, System.Windows.Forms.FormClosingEventArgs e)
+        {
+            PascClient = null;
         }
 
         private async void button1_Click(object sender, EventArgs e)

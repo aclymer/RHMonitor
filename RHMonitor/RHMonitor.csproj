@@ -54,10 +54,9 @@
     <ApplicationIcon>RHMonitor.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="NPascalCoin, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="NPascalCoin">
       <HintPath>..\..\NPascalCoin-master\NPascalCoin\bin\Release\NPascalCoin.dll</HintPath>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -135,6 +134,8 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Resources\NPascalCoin.dll" />
+    <EmbeddedResource Include="Resources\Newtonsoft.Json.dll" />
     <Content Include="RHMonitor.ico" />
   </ItemGroup>
   <ItemGroup>
