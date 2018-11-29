@@ -181,7 +181,6 @@ namespace RHMonitor
             this.ShowInTaskbar = false;
             this.Text = "Choose account to donate from:";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.CleanupBeforeClosing);
-            this.Shown += new System.EventHandler(this.Donate_Shown);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();

@@ -86,9 +86,9 @@ namespace RHMonitor
             this.menuStrip1.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+            this.menuStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
             this.menuStrip1.Size = new System.Drawing.Size(698, 36);
-            this.menuStrip1.TabIndex = 7;
+            this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
             // optionsToolStripMenuItem
@@ -140,8 +140,10 @@ namespace RHMonitor
             // deaultPortToolStripMenuItem
             // 
             this.deaultPortToolStripMenuItem.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.deaultPortToolStripMenuItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.deaultPortToolStripMenuItem.Enabled = false;
             this.deaultPortToolStripMenuItem.Name = "deaultPortToolStripMenuItem";
+            this.deaultPortToolStripMenuItem.ShowShortcutKeys = false;
             this.deaultPortToolStripMenuItem.Size = new System.Drawing.Size(122, 32);
             this.deaultPortToolStripMenuItem.Text = "Default Port:";
             // 

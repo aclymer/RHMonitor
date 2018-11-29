@@ -19,29 +19,38 @@ namespace RHMonitor
         public Donate()
         {
             InitializeComponent();
+            LoadAccounts();
         }
 
         private void LoadAccounts()
         {
-            PascClient = new NPascalCoin.RPC.PascalCoinClient();
-            var accounts = PascClient.GetWalletAccounts();
-            accounts = accounts.Where(x => { return x.Balance >= 1; }).ToArray<NPascalCoin.DTO.AccountDTO>();
-
-            foreach (var account in accounts)
+            try
             {
-                var item = new ListViewItem(new[] { account.Account.ToString(), account.Balance.ToString("N4") });
-                item.Name = account.Account.ToString();
-                senderAccountListView.Items.Add(item);
+
+                PascClient = new NPascalCoin.RPC.PascalCoinClient();
+                var accounts = PascClient.GetWalletAccounts();
+                accounts = accounts.Where(x => { return x.Balance >= 1; }).ToArray<NPascalCoin.DTO.AccountDTO>();
+
+                foreach (var account in accounts)
+                {
+                    var item = new ListViewItem(new[] { account.Account.ToString(), account.Balance.ToString("N4") });
+                    item.Name = account.Account.ToString();
+                    senderAccountListView.Items.Add(item);
+                }
+
+                senderAccountListView.Columns[0].Width = tableLayoutPanel1.Width / 2 - 10;
+                senderAccountListView.Columns[1].Width = tableLayoutPanel1.Width / 2 - 10;
             }
-
-            senderAccountListView.Columns[0].Width = tableLayoutPanel1.Width / 2 - 10;
-            senderAccountListView.Columns[1].Width = tableLayoutPanel1.Width / 2 - 10;
-        }
-
-
-        private void Donate_Shown(object sender, EventArgs e)
-        {
-            LoadAccounts();
+            catch (System.Net.WebException w_ex)
+            {
+                w_ex.Equals(w_ex);
+                MessageBox.Show("Wallet not found or JSON-RPC server port disabled", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                this.Close();
+            }
+            catch
+            {
+                this.Close();
+            }
         }
 
         private void CleanupBeforeClosing(object sender, System.Windows.Forms.FormClosingEventArgs e)
